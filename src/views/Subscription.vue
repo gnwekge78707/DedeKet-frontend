@@ -179,6 +179,7 @@
 </template>
 
 <script>
+
 import request from "@/utils/request";
 import mydialog from "@/components/searchBar";
 import ArticleComment from "@/components/comment";
@@ -187,6 +188,8 @@ import Header from "@/components/Header";
 import axios from "axios";
 import qs from "qs";
 import api from "@/utils/api";
+import { mapActions } from "vuex";
+import { mapGetters } from "vuex";
 export default {
   name: "Subscription",
   components: {ArticleComment, mydialog, Aside, Header},
@@ -241,6 +244,7 @@ export default {
     // this.load()
   },
   methods: {
+    ...mapActions(["unshiftShoppingCart", "addShoppingCartNum"]),
 
     reset() {
       this.load();
@@ -268,6 +272,7 @@ export default {
     handleSelect(item) {
       console.log(item);
     },
+
     querySearchBook(queryString, cb) {
       var restaurants = this.qbookName;
       var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
@@ -413,8 +418,51 @@ export default {
 
     },
     handleBook(id) {
-      this.dialogFormVisible = false
+      //this.dialogFormVisible = false
+      let url = this.$Api.glbhttp + "/deal/add-textbook-to-shopping-trolley";
+      let data1 = {
+        textbookId: id,
+        token: localStorage.getItem("token"),
+        subscriptionNumber: 1
+      };
+      console.log(data1)
+      axios.post(url, qs.stringify(data1), {
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+      }).then(res => {
+        console.log(res)
+        res.data.data.map( item => {
+          item.productID = item.textbookId.toString()
+          item.id = item.id.toString()
+          delete item.textbookId
+          item.productName = item.bookName
+          delete item.bookName
+          item.num = item.subscriptionNumber
+          delete item.subscriptionNumber
+          item.maxNum = item.remain
+          delete item.remain
+          item.check = false
+          if (item.photoIdArr == null) {
+            item.photoIdArr = [11, 13]
+          }
+          item.productImg = this.$Api.osshttp+ item.photoIdArr[0] +".png"
+          delete item.photoIdArr
 
+
+          delete item.status
+          delete item.createdAt
+          delete item.username
+        })
+        if (res.data.status === true) {
+          // 001 为成功, 更新vuex购物车状态
+          console.log(res.data.data[0])
+          this.unshiftShoppingCart(res.data.data[0]);
+          this.notifySucceed(res.data.status);
+        } else {
+          // 提示失败信息
+          this.notifyError(res.data.status);
+        }
+
+      })
     },
     save() {
 

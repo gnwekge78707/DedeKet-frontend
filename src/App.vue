@@ -7,8 +7,11 @@
 <script>
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
-
+import axios from "axios";
+import qs from "qs";
+import api from "@/utils/api";
 export default {
+
   data() {
     return {
       userToken: "",
@@ -38,10 +41,33 @@ export default {
       } else {
         // 用户已经登录,获取该用户的购物车信息
         this.$axios
-            .post(this.$Api.glbhttp + "/deal/get-trolley-textbook", {
+            .post(this.$Api.glbhttp + "/deal/get-trolley-textbook", qs.stringify({
               token: val
+            }), {
+              headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             })
             .then(res => {
+              res.data.data.map( item => {
+                item.productID = item.textbookId.toString()
+                delete item.textbookId
+                item.productName = item.bookName
+                delete item.bookName
+                item.num = item.subscriptionNumber
+                delete item.subscriptionNumber
+                item.maxNum = item.remain
+                delete item.remain
+                item.check = false
+                if (item.photoIdArr == null) {
+                  item.photoIdArr = [11, 13]
+                }
+                item.productImg = this.$Api.osshttp+ item.photoIdArr[0] +".png"
+                delete item.photoIdArr
+
+
+                delete item.status
+                delete item.createdAt
+                delete item.username
+              })
               if (res.data.status === true) {
                 // 001 为成功, 更新vuex购物车状态
                 this.setShoppingCart(res.data.data);

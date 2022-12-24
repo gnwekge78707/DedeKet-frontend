@@ -4,21 +4,12 @@ export default {
 
         shoppingCart: [{
             id: "id", // 购物车id
-            productID: "bookID", // 商品id
-            productName: "bookName", // 商品名称
-            productImg: "https://cdn.cnbj0.fds.api.mi-img.com/b2c-shopapi-pms/pms_1606288963.72951431.jpg", // 商品图片
+            productID: "mockBook", // 商品id
+            productName: "mockBook", // 商品名称
+            productImg: "https://dedeket.oss-cn-hangzhou.aliyuncs.com/tmp/1.png", // 商品图片
             price: "13", // 商品价格
             num: 3, // 商品数量
-            maxNum: "100", // 商品限购数量
-            check: false // 是否勾选
-        },{
-            id: "id2", // 购物车id
-            productID: "bookID2", // 商品id
-            productName: "bookName2", // 商品名称
-            productImg: "https://cdn.cnbj0.fds.api.mi-img.com/b2c-shopapi-pms/pms_1606288963.72951431.jpg", // 商品图片
-            price: "44", // 商品价格
-            num: 3, // 商品数量
-            maxNum: "100", // 商品限购数量
+            maxNum: 100, // 商品限购数量
             check: false // 是否勾选
         }]
         // shoppingCart结构
@@ -105,6 +96,7 @@ export default {
             // 添加购物车
             // 用于在商品详情页点击添加购物车,后台添加成功后，更新vuex状态
             state.shoppingCart.unshift(data);
+            console.log(state.shoppingCart)
         },
         updateShoppingCart (state, payload) {
             // 更新购物车

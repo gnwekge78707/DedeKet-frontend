@@ -59,7 +59,7 @@ const router = new VueRouter({
   routes
 })
 
-/*
+
 router.beforeEach(
     (to, from, next) => {
       localStorage.setItem("currentPathName", to.name)
@@ -94,5 +94,5 @@ router.beforeEach(
       }
     }
 )
-*/
+
 export default router

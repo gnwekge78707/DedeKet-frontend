@@ -33,7 +33,7 @@
           <li class="product-list" v-for="(product,i) in item" :key="i">
             <div class="pro-img">
               <router-link :to="{ path: '/goods/details', query: {productID:product.product_id} }">
-                <img :src="$target + product.product_picture" />
+                <img :src="product.product_picture" />
               </router-link>
             </div>
             <div class="pro-name">
@@ -43,7 +43,7 @@
             </div>
             <div class="pro-price">{{product.product_price}}元</div>
             <div class="pro-num">{{product.product_num}}</div>
-            <div class="pro-total pro-total-in">{{product.product_price*product.product_num}}元</div>
+            <div class="pro-total pro-total-in">{{product.product_price * product.product_num}}元</div>
           </li>
         </ul>
         <div class="order-bar">
@@ -82,10 +82,51 @@ export default {
   name: "Record",
   data() {
     return {
-      orders: [], // 订单列表
-      total: [] // 每个订单的商品数量及总价列表
+      orders: [[{
+        order_id: 122,
+        order_time: "a",
+        product_id: "asdfff",
+        product_picture: "https://dedeket.oss-cn-hangzhou.aliyuncs.com/tmp/1.png",
+        product_name: "fffff",
+        product_price: "122",
+        product_num: 3
+      },{
+        order_id: 122,
+        order_time: "a",
+        product_id: "asfasdfff",
+        product_picture: "https://dedeket.oss-cn-hangzhou.aliyuncs.com/tmp/1.png",
+        product_name: "ggggg",
+        product_price: "333",
+        product_num: 23
+      }],
+        [{
+          order_id: 4222,
+          order_time: "20222222",
+          product_id: "asdfff",
+          product_picture: "https://dedeket.oss-cn-hangzhou.aliyuncs.com/tmp/1.png",
+          product_name: "fffff",
+          product_price: "122",
+          product_num: 3
+        },{
+          order_id: 4122,
+          order_time: "a",
+          product_id: "asfasdfff",
+          product_picture: "https://dedeket.oss-cn-hangzhou.aliyuncs.com/tmp/1.png",
+          product_name: "ggggg",
+          product_price: "333",
+          product_num: 23
+        }]], // 订单列表
+      total: [{
+        totalNum:12,
+        totalPrice:"222"
+      },
+        {
+          totalNum:12,
+          totalPrice:"222"
+        }] // 每个订单的商品数量及总价列表
     };
   },
+  /*
   activated() {
     // 获取订单数据
     this.$axios
@@ -102,7 +143,7 @@ export default {
         .catch(err => {
           return Promise.reject(err);
         });
-  },
+  },*/
   watch: {
     // 通过订单信息，计算出每个订单的商品数量及总价
     orders: function(val) {
@@ -178,7 +219,7 @@ export default {
 }
 
 .order .content ul .header {
-  height: 85px;
+  height: 75px;
   padding-right: 26px;
   color: #424242;
 }
@@ -186,7 +227,7 @@ export default {
 
 /* 订单列表CSS */
 .order .content ul .product-list {
-  height: 85px;
+  height: 100px;
   padding: 15px 26px 15px 0;
   border-top: 1px solid #e0e0e0;
 }
@@ -194,14 +235,16 @@ export default {
   float: left;
   height: 85px;
   width: 120px;
-  padding-left: 80px;
+  padding-left: 100px;
 }
 .order .content ul .pro-img img {
   height: 80px;
   width: 80px;
+  padding-bottom: 10px;
 }
 .order .content ul .pro-name {
   float: left;
+  padding-left: 130px;
   width: 380px;
 }
 .order .content ul .pro-name a {

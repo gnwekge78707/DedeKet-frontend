@@ -118,6 +118,7 @@
 
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
+import qs from "qs";
 export default {
   name: "ShoppingCart",
   data() {
@@ -176,16 +177,20 @@ export default {
     deleteItem(e, id, productID) {
       this.deleteShoppingCart(id);
       this.$axios
-          .post("/api/user/shoppingCart/deleteShoppingCart", {
-            user_id: this.$store.getters.getUser.user_id,
-            product_id: productID
+          .post(this.$Api.glbhttp + "/deal/delete-trolley-textbook",  qs.stringify({
+            token: localStorage.getItem("token"),
+            unpaidSubscriptionId: id
+          }), {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
           })
           .then(res => {
-            switch (res.data.code) {
-              case "001":
+            switch (res.data.status) {
+              case true:
                 // “001” 删除成功
                 // 更新vuex状态
-                this.deleteShoppingCart(id);
+
+                //this.deleteShoppingCart(id);
+
                 // 提示删除成功信息
                 this.notifySucceed(res.data.msg);
                 break;
