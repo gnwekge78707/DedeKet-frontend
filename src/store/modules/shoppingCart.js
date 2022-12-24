@@ -64,6 +64,16 @@ export default {
             }
             return checkGoods;
         },
+        getIdArr (state) {
+            let res = "";
+            for (let i = 0; i < state.shoppingCart.length; i++) {
+                const temp = state.shoppingCart[i];
+                if (temp.check) {
+                    res = res + temp.id.toString();
+                }
+            }
+            return res;
+        },
         getCheckNum (state) {
             // 获取购物车勾选的商品数量
             let totalNum = 0;

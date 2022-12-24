@@ -119,6 +119,7 @@
 import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
 import qs from "qs";
+import axios from "axios";
 export default {
   name: "ShoppingCart",
   data() {
@@ -137,31 +138,29 @@ export default {
       });
       // 向后端发起更新购物车的数据库信息请求
       this.$axios
-          .post("/api/user/shoppingCart/updateShoppingCart", {
-            user_id: this.$store.getters.getUser.user_id,
-            product_id: productID,
-            num: currentValue
+          .post(this.$Api.glbhttp + "/deal/change-trolley-textbook-quantity", qs.stringify({
+            token: localStorage.getItem("token"),
+            unpaidSubscriptionId: productID,
+            quantity: currentValue
+          }), {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
           })
           .then(res => {
-            switch (res.data.code) {
-              case "001":
+            switch (res.data.status) {
+              case true:
                 // “001”代表更新成功
                 // 更新vuex状态
+                /*
                 this.updateShoppingCart({
                   key: key,
                   prop: "num",
                   val: currentValue
-                });
+                });*/
                 // 提示更新成功信息
-                this.notifySucceed(res.data.msg);
+                this.notifySucceed("更新购物车成功");
                 break;
               default:
                 // 提示更新失败信息
-                this.updateShoppingCart({
-                  key: key,
-                  prop: "num",
-                  val: currentValue
-                });
                 this.notifyError(res.data.msg);
             }
           })
@@ -272,6 +271,7 @@ export default {
   background-color: #fff;
   color: #424242;
   line-height: 85px;
+  list-style: none;
 }
 /* 购物车表头及CSS */
 .shoppingCart .content ul .header {

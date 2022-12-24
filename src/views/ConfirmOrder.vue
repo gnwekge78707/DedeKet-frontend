@@ -74,19 +74,19 @@
       <div class="section-count">
         <div class="money-box">
           <ul>
-            <li>
+            <li style="list-style: none">
               <span class="title">教材件数：</span>
               <span class="value">{{getCheckNum}}件</span>
             </li>
-            <li>
+            <li style="list-style: none">
               <span class="title">教材总价：</span>
               <span class="value">{{getTotalPrice}}元</span>
             </li>
-            <li>
+            <li style="list-style: none">
               <span class="title">运费：</span>
               <span class="value">0元</span>
             </li>
-            <li class="total">
+            <li class="total"  style="list-style: none">
               <span class="title">应付总额：</span>
               <span class="value">
                 <span class="total-price">{{getTotalPrice}}</span>元
@@ -166,7 +166,7 @@ export default {
                   this.deleteShoppingCart(temp.id);
                 }
                 // 提示结算结果
-                this.notifySucceed(res.data.msg);
+                this.notifySucceed("提交订单成功");
                 // 跳转我的订单页面
                 this.$router.push({ path: "/record" });
                 break;
@@ -242,6 +242,7 @@ export default {
   padding: 15px 24px 0;
   margin-right: 17px;
   margin-bottom: 24px;
+  list-style: none;
 }
 .confirmOrder .content .address-body .in-section {
   border: 1px solid rgba(174, 250, 223, 0.55);
@@ -251,10 +252,12 @@ export default {
   font-weight: normal;
   line-height: 30px;
   margin-bottom: 10px;
+  list-style: none;
 }
 .confirmOrder .content .address-body li p {
   font-size: 14px;
   color: #757575;
+  list-style: none;
 }
 .confirmOrder .content .address-body li .address {
   padding: 10px 0;
@@ -262,6 +265,7 @@ export default {
   max-height: 88px;
   line-height: 22px;
   overflow: hidden;
+  list-style: none;
 }
 .confirmOrder .content .address-body .add-address {
   text-align: center;
@@ -292,23 +296,27 @@ export default {
   padding: 10px 0;
   color: #424242;
   overflow: hidden;
+  list-style: none;
 }
 .confirmOrder .content .section-goods .goods-list li img {
   float: left;
   width: 30px;
   height: 30px;
   margin-right: 10px;
+  list-style: none;
 }
 .confirmOrder .content .section-goods .goods-list li .pro-name {
   float: left;
   width: 650px;
   line-height: 30px;
+  list-style: none;
 }
 .confirmOrder .content .section-goods .goods-list li .pro-price {
   float: left;
   width: 150px;
   text-align: center;
   line-height: 30px;
+  list-style: none;
 }
 .confirmOrder .content .section-goods .goods-list li .pro-status {
   float: left;
@@ -316,6 +324,7 @@ export default {
   height: 30px;
   text-align: center;
   line-height: 30px;
+  list-style: none;
 }
 .confirmOrder .content .section-goods .goods-list li .pro-total {
   float: left;
@@ -323,6 +332,7 @@ export default {
   text-align: center;
   color: #11649C;
   line-height: 30px;
+  list-style: none;
 }
 /* 商品及优惠券CSS END */
 

@@ -22,7 +22,7 @@
           </li>
           <li class="header">
             <div class="pro-img"></div>
-            <div class="pro-name">商品名称</div>
+            <div class="pro-name">教材名称</div>
             <div class="pro-price">单价</div>
             <div class="pro-num">数量</div>
             <div class="pro-total">小计</div>
@@ -50,7 +50,7 @@
           <div class="order-bar-left">
             <span class="order-total">
               共
-              <span class="order-total-num">{{total[index].totalNum}}</span> 件商品
+              <span class="order-total-num">{{total[index].totalNum}}</span> 件教材
             </span>
           </div>
           <div class="order-bar-right">
@@ -126,7 +126,7 @@ export default {
         }] // 每个订单的商品数量及总价列表
     };
   },
-  /*
+
   activated() {
     // 获取订单数据
     this.$axios
@@ -143,7 +143,7 @@ export default {
         .catch(err => {
           return Promise.reject(err);
         });
-  },*/
+  },
   watch: {
     // 通过订单信息，计算出每个订单的商品数量及总价
     orders: function(val) {
@@ -201,6 +201,7 @@ export default {
   background-color: #fff;
   color: #424242;
   line-height: 85px;
+  list-style: none;
 }
 /* 我的订单表头CSS */
 .order .content ul .order-info {
@@ -209,6 +210,7 @@ export default {
   padding: 0 26px;
   color: #424242;
   border-bottom: 1px solid #11649C;
+  list-style: none;
 }
 .order .content ul .order-info .order-id {
   float: left;
@@ -222,6 +224,7 @@ export default {
   height: 75px;
   padding-right: 26px;
   color: #424242;
+  list-style: none;
 }
 /* 我的订单表头CSS END */
 
@@ -230,6 +233,7 @@ export default {
   height: 100px;
   padding: 15px 26px 15px 0;
   border-top: 1px solid #e0e0e0;
+  list-style: none;
 }
 .order .content ul .pro-img {
   float: left;

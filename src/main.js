@@ -15,6 +15,10 @@ Vue.prototype.$axios = axios
 
 Vue.use(ElementUI, {size: "small"})
 
+import Global from "./Global"
+Vue.use(Global);
+
+
 Vue.prototype.request=request
 //配置全局api
 import api from './utils/api'    //先引入文件
