@@ -113,6 +113,9 @@
 <script>
 import { mapGetters } from "vuex";
 import { mapActions } from "vuex";
+import axios from "axios";
+import qs from "qs";
+import api from "@/utils/api";
 export default {
   name: "ConfirmOrder",
   data() {
@@ -145,21 +148,29 @@ export default {
   },
   computed: {
     // 结算的商品数量; 结算商品总计; 结算商品信息
-    ...mapGetters(["getCheckNum", "getTotalPrice", "getCheckGoods"])
+    ...mapGetters(["getCheckNum", "getTotalPrice", "getCheckGoods", "getIdArr"])
   },
   methods: {
     ...mapActions(["deleteShoppingCart"]),
     addOrder() {
+      console.log({
+        token: localStorage.getItem("token"),
+        idArr: this.getIdArr,
+        totalPrice: this.getTotalPrice
+      })
       this.$axios
-          .post("/api/user/order/addOrder", {
-            user_id: this.$store.getters.getUser.user_id,
-            products: this.getCheckGoods
+          .post(this.$Api.glbhttp + "/deal/pay-textbook", qs.stringify({
+            token: localStorage.getItem("token"),
+            idArr: this.getIdArr,
+            totalPrice: this.getTotalPrice
+          }), {
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
           })
           .then(res => {
             let products = this.getCheckGoods;
-            switch (res.data.code) {
+            switch (res.data.status) {
                 // “001”代表结算成功
-              case "001":
+              case true:
                 for (let i = 0; i < products.length; i++) {
                   const temp = products[i];
                   // 删除已经结算的购物车商品
@@ -172,7 +183,7 @@ export default {
                 break;
               default:
                 // 提示失败信息
-                this.notifyError(res.data.msg);
+                this.notifyError("err");
             }
           })
           .catch(err => {

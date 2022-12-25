@@ -52,7 +52,7 @@
             <el-input-number
                 size="small"
                 :value="item.num"
-                @change="handleChange($event,index,item.productID)"
+                @change="handleChange($event,index,item.id)"
                 :min="1"
                 :max="10000"
             ></el-input-number>
@@ -137,6 +137,11 @@ export default {
         val: currentValue
       });
       // 向后端发起更新购物车的数据库信息请求
+      console.log({
+        token: localStorage.getItem("token"),
+        unpaidSubscriptionId: productID,
+        quantity: currentValue
+      })
       this.$axios
           .post(this.$Api.glbhttp + "/deal/change-trolley-textbook-quantity", qs.stringify({
             token: localStorage.getItem("token"),
@@ -414,7 +419,7 @@ export default {
   height: 300px;
   padding: 0 0 130px 558px;
   margin: 65px 0 0;
-  background: url(../assets/imgs/cart-empty.png) no-repeat 124px 0;
+  background: url(../assets/img/cart-empty.png) no-repeat 124px 0;
   color: #b0b0b0;
   overflow: hidden;
 }

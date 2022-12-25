@@ -55,6 +55,7 @@ export default {
         getCheckGoods (state) {
             // 获取勾选的商品信息
             // 用于确认订单页面
+
             let checkGoods = [];
             for (let i = 0; i < state.shoppingCart.length; i++) {
                 const temp = state.shoppingCart[i];
@@ -69,10 +70,10 @@ export default {
             for (let i = 0; i < state.shoppingCart.length; i++) {
                 const temp = state.shoppingCart[i];
                 if (temp.check) {
-                    res = res + temp.id.toString();
+                    res = res + temp.id.toString() + " ";
                 }
             }
-            return res;
+            return res.replace(/(^s*)|(s*$)/g, "");
         },
         getCheckNum (state) {
             // 获取购物车勾选的商品数量

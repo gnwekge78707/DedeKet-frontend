@@ -78,10 +78,20 @@
 </template>
 
 <script>
+
+import { mapActions } from "vuex";
+import { mapGetters } from "vuex";
+import axios from "axios";
+import qs from "qs";
+import api from "@/utils/api";
+
 export default {
   name: "Record",
   data() {
     return {
+      orders: [],
+      total: []
+      /*
       orders: [[{
         order_id: 122,
         order_time: "a",
@@ -124,20 +134,56 @@ export default {
           totalNum:12,
           totalPrice:"222"
         }] // 每个订单的商品数量及总价列表
+
+       */
     };
   },
 
-  activated() {
+  mounted() {
     // 获取订单数据
+    console.log({
+      token: localStorage.getItem("token")
+    })
+
     this.$axios
-        .post("/api/user/order/getOrder", {
-          user_id: this.$store.getters.getUser.user_id
+        .post(this.$Api.glbhttp + "/deal/display-purchase-record", qs.stringify({
+          token: localStorage.getItem("token")
+        }), {
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         })
         .then(res => {
-          if (res.data.code === "001") {
-            this.orders = res.data.orders;
-          } else {
-            this.notifyError(res.data.msg);
+          console.log(res)
+          switch (res.data.status) {
+            case true:
+              console.log("ssssssssssssssssss")
+              var dataArr = []
+              res.data.data.map( item => {
+                let order_id = item.id
+                let order_time = item.createdAt
+                var newArr = []
+                item.paidTrolleyTextbookArr.map( book => {
+                  book.product_id = book.id
+                  delete book.id
+                  book.product_picture = this.$Api.osshttp+ book.photoIdArr[0] +".png"
+                  delete book.photoIdArr
+                  book.product_name = book.bookName
+                  delete book.bookName
+                  book.product_price = book.price
+                  delete book.price
+                  book.product_num = book.subscriptionNumber
+                  delete book.subscriptionNumber
+                  book.order_id = order_id
+                  book.order_time = order_time
+                  newArr.unshift(book)
+                })
+                dataArr.unshift(newArr)
+              })
+              console.log(dataArr)
+              this.orders = dataArr;
+              break;
+            default:
+              console.log("tttttttttttttttttttttt")
+              this.notifyError("unable to display purchased order");
           }
         })
         .catch(err => {
@@ -317,7 +363,7 @@ export default {
   height: 300px;
   padding: 0 0 130px 558px;
   margin: 65px 0 0;
-  background: url(../assets/imgs/cart-empty.png) no-repeat 124px 0;
+  background: url(../assets/img/cart-empty.png) no-repeat 124px 0;
   color: #b0b0b0;
   overflow: hidden;
 }

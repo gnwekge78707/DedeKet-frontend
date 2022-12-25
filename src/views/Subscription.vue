@@ -19,6 +19,11 @@
 
                        @select="handleSelect"
                        v-model="classId"></el-autocomplete>
+      <el-autocomplete clearable prefix-icon="el-icon-position" placeholder="请输入发布者并查询" style="width: 20%" class="ml-5 inline-input"
+                       :fetch-suggestions="querySearchSeller"
+
+                       @select="handleSelect"
+                       v-model="seller"></el-autocomplete>
       <!--            <mydialog></mydialog>-->
       <el-button type="primary" @click="load">搜索</el-button>
       <el-button type="warning" @click="reset">重置</el-button>
@@ -68,7 +73,7 @@
       <el-table-column prop="rating" label="评分">
         <template slot-scope="scope">
           <!-- <el-rate v-model="scope.row.evaValue" :allow-half="true"  disabled show-score text-color="#ff9900" score-template="{value}"></el-rate> -->
-          <el-rate v-model="scope.row.rating" :allow-half="true" disabled text-color="#ff9900" show-score
+          <el-rate v-model="scope.row.grade" :allow-half="true" disabled text-color="#ff9900" show-score
           ></el-rate>
         </template>
       </el-table-column>
@@ -125,7 +130,7 @@
         <div class="block" style="text-align: center; font-family: 'Times New Roman'; font-weight: bold">
           <span class="demonstration">书籍打分</span>
           <el-rate
-              v-model="nowrating"
+              v-model="nowgrade"
               :colors="colors">
           </el-rate>
         </div>
@@ -179,7 +184,6 @@
 </template>
 
 <script>
-
 import request from "@/utils/request";
 import mydialog from "@/components/searchBar";
 import ArticleComment from "@/components/comment";
@@ -204,22 +208,27 @@ export default {
       seller: "教务处",
       remain: "100",
       total: "200",
-      rating: "3.7",
+      grade: "3.7",
       class: "概率论与数理统计",
       description: "",
 
       comments: [],
     }
     return {
-
+      multiSelection:[],
       tableData: [],
       total: 10,
       pageNum: 1,
       dialogFormVisible: false,
       classId: "",
       bookName: "",
-      pageSize: 3,
-
+      seller:"",
+      pageSize: 5,
+      qclassIds: [],
+      qbookName: [],
+      qwriter: [],
+      qdata: [],
+      qseller: [],
       classIds: [],
       usernames: [],
       alldata: [],
@@ -232,7 +241,7 @@ export default {
         email: "",
       },
       colors: ['#5194ee', '#e0a40c', '#ee510d'],
-      nowrating: 0,
+      nowgrade: 0,
     }
   },
   created() {
@@ -241,7 +250,7 @@ export default {
     console.log("created done")
   },
   mounted() {
-    // this.load()
+    this.gAll();
   },
   methods: {
     ...mapActions(["unshiftShoppingCart", "addShoppingCartNum"]),
@@ -272,7 +281,6 @@ export default {
     handleSelect(item) {
       console.log(item);
     },
-
     querySearchBook(queryString, cb) {
       var restaurants = this.qbookName;
       var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
@@ -281,6 +289,12 @@ export default {
     },
     querySearchClass(queryString, cb) {
       var restaurants = this.qclassIds;
+      var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    querySearchSeller(queryString, cb) {
+      var restaurants = this.qseller;
       var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
       // 调用 callback 返回建议列表的数据
       cb(results);
@@ -298,8 +312,8 @@ export default {
         pageIndex: 1,
         pageSize: 200,
         bookNameKeyword: this.bookName,
-        classKeyword: this.classId
-
+        classKeyword: this.classId,
+        sellerKeyword: this.seller,
       };
       console.log(data1)
       axios.post(url, qs.stringify(data1), {
@@ -311,11 +325,13 @@ export default {
 
         var qkn = res.map((item) => {return item.bookName}).filter((x, index,self)=>self.indexOf(x)===index)
         var qci = res.map((item) => {return item.class}).filter((x, index,self)=>self.indexOf(x)===index)
+        var qcs = res.map((item) => {return item.seller}).filter((x, index,self)=>self.indexOf(x)===index)
         this.qbookName = qkn.map((item) => {return {"value": item}})
         this.qclassIds = qci.map((item) => {return {"value": item}})
+        this.qseller = qcs.map((item) => {return {"value": item}})
         console.log(this.qbookName)
         console.log(this.qclassIds)
-
+        console.log(this.qseller)
       })
     },
     load() {
@@ -326,8 +342,8 @@ export default {
         pageIndex: this.pageNum,
         pageSize: this.pageSize,
         bookNameKeyword: this.bookName,
-        classKeyword: this.classId
-
+        classKeyword: this.classId,
+        sellerKeyword: this.seller,
       };
       console.log(data1)
       axios.post(url, qs.stringify(data1), {
@@ -337,7 +353,7 @@ export default {
         console.log(res.data.data)
 
         res.data.data.map( item => {
-          item.rating = 5
+
 
           if (item.photoIdArr == null) {
             item.photoIdArr = [11, 13]
@@ -401,12 +417,17 @@ export default {
               CreatedAt: "2022-09-30 10:10:44",
               commentNum:0,
               like:0,
+
             }
           ]
 
           //console.log("null null", this.nowitem.comments)
         } else {
           this.nowitem.comments = res.data.data
+          this.nowitem.comments.forEach((item, index, arr) => {
+            item.imgHeader = "https://dedeket.oss-cn-hangzhou.aliyuncs.com/head_portrait/" + item.Sender + ".png"
+          })
+          console.log("seeItem?", this.nowitem.comments)
           //console.log("no null", this.nowitem.comments)
         }
         console.log("shit")
@@ -465,10 +486,25 @@ export default {
       })
     },
     save() {
+      let url = this.$Api.glbhttp + "/deal/grade-textbook";
+      let data1 = {
+        textbookId: this.nowitem.id,
+        grade: this.nowgrade,
+        token: localStorage.getItem("token")
+      };
+      console.log(data1)
+      axios.post(url, qs.stringify(data1), {
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+      }).then(res => {
+
+        console.log("grade res", res.data.data)
+        this.dialogFormVisible = false
+      })
 
     },
     handleSelectionChange(val) {
       this.multiSelection = val;
+      console.log("multsel", this.multiSelection)
     },
   }
 }

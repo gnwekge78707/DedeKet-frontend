@@ -24,6 +24,15 @@ const routes = [
       { path: "cart", name: '购物车', component: () => import("../views/ShoppingCart")},
       { path: "record", name: '交易记录', component: () => import("../views/Record")},
       { path: "confirmOrder", name: '交易', component: () => import("../views/ConfirmOrder")},
+
+      {
+        path: 'pinfo',
+        name: '个人信息',
+        component: () => import('../views/User'),
+        meta: {
+          title: '个人信息'
+        }
+      },
     ]
   },
   {
@@ -51,6 +60,8 @@ const routes = [
     }
   },
 
+
+
 ]
 
 const router = new VueRouter({
@@ -58,7 +69,6 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
-
 
 router.beforeEach(
     (to, from, next) => {

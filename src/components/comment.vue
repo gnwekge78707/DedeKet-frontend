@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-clickoutside="hideReplyBtn" @click="inputFocus" class="my-reply">
-      <el-avatar class="header-img" :size="40" :src="myHeader"></el-avatar>
+      <el-image style="height: 40px; width: 40px; border-radius: 20px" class="header-img" :size="40" :src="myHeader" @error="itemError()"></el-image>
       <div class="reply-info" >
         <div
             tabindex="0"
@@ -20,7 +20,8 @@
       </div>
     </div>
     <div v-for="(item,i) in comments" :key="i" class="author-title reply-father">
-      <el-avatar class="header-img" :size="40" :src="item.headImg"></el-avatar>
+      <el-image style="height: 40px; width: 40px; border-radius: 20px" class="header-img" :size="40" :src="item.imgHeader" @error="itemthisError(item)"> </el-image>
+<!--      "https://dedeket.oss-cn-hangzhou.aliyuncs.com/head_portrait/" + name + ".png"-->
       <div class="author-info">
         <span class="author-name">{{item.Sender}}</span>
         <span class="author-time">{{item.CreatedAt}}</span>
@@ -57,7 +58,7 @@
         </div>
       </div>
       <div  v-show="_inputShow(i)" class="my-reply my-comment-reply">
-        <el-avatar class="header-img" :size="40" :src="myHeader"></el-avatar>
+        <el-image style="height: 40px; width: 40px; border-radius: 20px" class="header-img" :size="40" :src="myHeader" @error="itemError()"></el-image>
         <div class="reply-info" >
           <div tabindex="0" contenteditable="true" spellcheck="false" placeholder="输入评论..."   @input="onDivInput($event)"  class="reply-input reply-comment-input"></div>
         </div>
@@ -134,7 +135,7 @@ export default {
       index:'0',
       replyComment:'',
       myName: localStorage.getItem("username"),
-      myHeader:'https://img2.baidu.com/it/u=390829681,3002818272&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500',
+      myHeader:" https://dedeket.oss-cn-hangzhou.aliyuncs.com/head_portrait/" + localStorage.getItem("username") + ".png",
       myId: this.myName,
       to:'',
       toId:-1,
@@ -143,6 +144,12 @@ export default {
   },
   directives: {clickoutside},
   methods: {
+    itemError() {
+      this.myHeader = require('@/assets/avt.png')
+    },
+    itemthisError(item) {
+      item.imgHeader = require('@/assets/avt.png')
+    },
     uuid() {
       var s = [];
       var hexDigits = '0123456789abcdef';
@@ -219,7 +226,7 @@ export default {
         axios.post(url, qs.stringify(data1), {
           headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).then(res => {
-          console.log(res)
+          console.log("what happened to my comment",res)
         })
         this.replyComment = ''
         input.innerHTML = '';
@@ -331,6 +338,9 @@ export default {
   .header-img
     display inline-block
     vertical-align top
+    border-radius: 20px
+
+    //style="border-radius: 20px; height:40px; width: 40px; margin-top: 10px; margin-left: 5px; margin-right: 5px"
   .author-info
     display inline-block
     margin-left 5px

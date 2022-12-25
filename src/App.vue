@@ -71,6 +71,7 @@ export default {
               if (res.data.status === true) {
                 // 001 为成功, 更新vuex购物车状态
                 this.setShoppingCart(res.data.data);
+                this.notifySucceed("update cart");
               } else {
                 // 提示失败信息
                 this.notifyError(res.data.msg);

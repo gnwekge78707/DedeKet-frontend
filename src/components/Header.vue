@@ -10,17 +10,21 @@
       </el-breadcrumb>
     </div>
 
-    <el-image src="https://img2.baidu.com/it/u=390829681,3002818272&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=500"
-              style="border-radius: 20px; height:40px; width: 40px; margin-top: 10px; margin-left: 5px; margin-right: 5px"></el-image>
-    <span style="font-size: 16px">{{nick}}</span>
+    <el-image :src="imageUrl"
+              style="border-radius: 20px; height:40px; width: 40px; margin-top: 10px; margin-left: 5px; margin-right: 5px" @error="itemError()"></el-image>
+    <span v-if="name==='教材处'" style="font-size: 16px; color: #409EFF">{{nick}}</span>
+    <span v-if="name!=='教材处'" style="font-size: 16px;">{{nick}}</span>
     <el-dropdown style="width: 3vh; margin-left: 5px">
       <i class="el-icon-arrow-down" style="width: 10px; cursor: pointer"></i>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item style="font-size: 14px">个人信息</el-dropdown-item>
+        <el-dropdown-item style="font-size: 14px" @click.native="goInfo">个人信息</el-dropdown-item>
         <el-dropdown-item @click.native="logout" style="font-size: 14px" >注销登出</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+
 </div>
+
+
 </template>
 
 <script>
@@ -33,7 +37,15 @@ export default {
     collapseBtnClass: String,
     collapse: Function
   },
+
   methods: {
+    itemError() {
+      this.imageUrl = require('@/assets/avt.png')
+    },
+    goInfo() {
+      this.$router.push("/pinfo")
+    },
+
     logout() {
       console.log("logout")
       this.$confirm('是否退出登录?', '提示', {
@@ -80,7 +92,10 @@ export default {
   data() {
     return {
       // currentPathName: localStorage.getItem("currentPathName")
-      nick: ""
+      nick: "",
+      name: localStorage.getItem("username"),
+      id: 1,
+      imageUrl: "https://dedeket.oss-cn-hangzhou.aliyuncs.com/head_portrait/" +  localStorage.getItem("username") + ".png",
     }
   },
   computed: {

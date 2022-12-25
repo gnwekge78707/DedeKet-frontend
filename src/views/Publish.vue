@@ -32,9 +32,9 @@
       <div class="box-card" style="" v-for="item in tableData">
         <el-card>
           <div slot="header" class="clearfix">
-            <el-button type="primary" icon="el-icon-edit" circle style=" margin-left: -28%;" size="mini"
+            <el-button type="primary" icon="el-icon-edit" circle style=" float: left" size="mini"
                        @click="handleInfo(item)"></el-button>
-            <span style="margin-left: 30%">{{ item.bookName }}</span>
+            <span style="margin-left: 5%">{{ item.bookName }}</span>
 
             <el-button style="float: right; padding: 3px 0" type="text" @click="handleDelPub(item)">删除发布</el-button>
 
@@ -103,7 +103,7 @@
 
         </el-card>
       </div>
-      c
+
 
     </div>
 
@@ -158,55 +158,6 @@
                 可上传jpg、jpeg、png格式，不能超过50M
               </p>
             </div>
-<!--            <el-upload-->
-<!--                class="upload-demo"-->
-<!--                action="deal/get-textbook-photo-file"-->
-<!--                :on-preview="handlePreview"-->
-<!--                :on-remove="handleRemove"-->
-<!--                :file-list="fileList"-->
-<!--                list-type="picture">-->
-<!--              <el-button size="small" type="primary">点击上传</el-button>-->
-<!--              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>-->
-<!--            </el-upload>-->
-<!---->
-<!--            <el-upload-->
-<!--                action="#"-->
-<!--                list-type="picture-card"-->
-<!--                :auto-upload="false">-->
-<!--              <i slot="default" class="el-icon-plus"></i>-->
-<!--              <div slot="file" slot-scope="{file}">-->
-<!--                <img-->
-<!--                    class="el-upload-list__item-thumbnail"-->
-<!--                    :src="file.url" alt=""-->
-<!--                >-->
-<!--                <span class="el-upload-list__item-actions">-->
-<!--        <span-->
-<!--            class="el-upload-list__item-preview"-->
-<!--            @click="handlePictureCardPreview(file)"-->
-<!--        >-->
-<!--          <i class="el-icon-zoom-in"></i>-->
-<!--        </span>-->
-<!--        <span-->
-<!--            v-if="!disabled"-->
-<!--            class="el-upload-list__item-delete"-->
-<!--            @click="handleDownload(file)"-->
-<!--        >-->
-<!--          <i class="el-icon-download"></i>-->
-<!--        </span>-->
-<!--        <span-->
-<!--            v-if="!disabled"-->
-<!--            class="el-upload-list__item-delete"-->
-<!--            @click="handleRemove(file)"-->
-<!--        >-->
-<!--          <i class="el-icon-delete"></i>-->
-<!--        </span>-->
-<!--      </span>-->
-<!--              </div>-->
-<!--            </el-upload>-->
-
-<!--            <el-dialog :visible.sync="dialogVisible">-->
-<!--              <img width="100%" :src="dialogImageUrl" alt="">-->
-<!--            </el-dialog>-->
 
           </div>
         </div>
@@ -335,7 +286,7 @@
     <el-dialog title="新增书本信息" :visible.sync="dialogFormVisibleAdd" width="80%">
       {{ form.bookName }}
       <el-form label-width="220px" :model="form">
-<!--        upp-->
+        <!--        upp-->
         <div class="relicsImage_content">
           <el-upload
               class="upload_reilcimg"
@@ -518,14 +469,15 @@ export default {
       headers: {
         Authorization: sessionStorage.getItem("token"),
       },
-      nick: localStorage.getItem("username"),
+      nick: localStorage.getItem("username") === "教材处" ? "" : localStorage.getItem("username"),
       tableData: [],
-      total: 10,
+      total: 0,
       pageNum: 1,
       dialogFormVisible: false,
       dialogFormVisibleAdd: false,
       classId: "",
       bookName: "",
+      seller:"",
       pageSize: 5,
       editing: {
         "bookName": false,
@@ -539,6 +491,7 @@ export default {
       qbookName: [],
       qwriter: [],
       qdata: [],
+      qseller: [],
       nowitem: item,
       cacheform: {
         bookName: "",
@@ -700,6 +653,7 @@ export default {
   },
   mounted() {
     this.gAll();
+    this.load()
   },
   methods: {
     doEditing(editState) {
@@ -723,15 +677,15 @@ export default {
       const isJPG = file.type === "image/jpeg";
       const isPng = file.type === "image/png";
       const isPdf = file.type === "application/pdf";
-        const isLt50M = file.size / 1024 / 1024 < 50;
-        if (!isLt50M) {
-          this.$message.warning("上传文件大小不能超过 50MB!");
-          return false;
-        }
-        if (!isJPG && !isPng && !isPdf) {
-          this.$message.warning("只能上传 JPG/PNG/PDF/JPEG 格式!");
-          return false;
-        }
+      const isLt50M = file.size / 1024 / 1024 < 50;
+      if (!isLt50M) {
+        this.$message.warning("上传文件大小不能超过 50MB!");
+        return false;
+      }
+      if (!isJPG && !isPng && !isPdf) {
+        this.$message.warning("只能上传 JPG/PNG/PDF/JPEG 格式!");
+        return false;
+      }
     },
     // 上传成功
     handleAvatarSuccess() {},
@@ -861,13 +815,14 @@ export default {
         pageIndex: 1,
         pageSize: 200,
         bookNameKeyword: this.bookName,
-        classKeyword: this.classId
-
+        classKeyword: this.classId,
+        sellerKeyword: this.seller,
       };
       console.log(data1)
       axios.post(url, qs.stringify(data1), {
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
       }).then(res => {
+
 
         console.log(res.data.data)
         res = res.data.data
@@ -881,6 +836,11 @@ export default {
         var qwt = res.map((item) => {
           return item.writer
         }).filter((x, index, self) => self.indexOf(x) === index)
+
+        var qws = res.map((item) => {
+          return item.seller
+        }).filter((x, index, self) => self.indexOf(x) === index)
+
         this.qbookName = qkn.map((item) => {
           return {"value": item}
         })
@@ -890,9 +850,13 @@ export default {
         this.qwriter = qwt.map((item) => {
           return {"value": item}
         })
+
+        this.qseller = qws.map((item) => {
+          return {"value": item}
+        })
         console.log(this.qbookName)
         console.log(this.qclassIds)
-
+        console.log(this.qseller)
       })
     },
 
@@ -906,34 +870,38 @@ export default {
         pageSize: this.pageSize,
         bookNameKeyword: this.bookName,
         classKeyword: this.classId,
-        seller: this.nick
+        sellerKeyword: this.nick
       };
-      console.log(data1)
+      console.log("loading", data1)
       axios.post(url, qs.stringify(data1), {
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
       }).then(res => {
 
         console.log(res.data.data)
+        if (res.data.data !== null) {
+          res.data.data.map( item => {
+            item.rating = 5
 
-        res.data.data.map( item => {
-          item.rating = 5
+            if (item.photoIdArr == null) {
+              item.photoIdArr = [11, 13]
+            }
+            item.srclist = item.photoIdArr.map((ii) => {return this.$Api.osshttp+ ii +".png"})
+            item.url = this.$Api.osshttp+ item.photoIdArr[0] +".png"
+            // item.srclist = [
+            //   'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+            //   'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
+            // ]
+            // console.log('allitem',item)
+            // return{}
+          })
 
-          if (item.photoIdArr == null) {
-            item.photoIdArr = [11, 13]
-          }
-          item.srclist = item.photoIdArr.map((ii) => {return this.$Api.osshttp+ ii +".png"})
-          item.url = this.$Api.osshttp+ item.photoIdArr[0] +".png"
-          // item.srclist = [
-          //   'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
-          //   'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
-          // ]
-          // console.log('allitem',item)
-          // return{}
-        })
+          this.tableData = res.data.data
+          this.total = res.data.total * this.pageSize
+          console.log("at load end", this.tableData, this.total)
+        } else {
 
-        this.tableData = res.data.data
-        this.total = res.data.total * this.pageSize
-        console.log("at load end", this.tableData, this.total)
+        }
+
       })
     },
     handleSizeChange(pageSize) {
@@ -982,6 +950,7 @@ export default {
       for (const key in data1 ) {
         formData.append(key, data1[key]);
       }
+      formData.append("token", localStorage.getItem("token"))
       let config = {
         header : {
           'Content-Type' : 'multipart/form-data'
