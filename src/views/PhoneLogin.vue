@@ -110,7 +110,7 @@ export default {
               localStorage.removeItem("username")
               localStorage.removeItem("token")
             }, 600000) // 10min后自动清除token
-            this.$router.push('/')
+            this.$router.push('/home')
           } else {
             window.alert("验证码错误")
             this.loginForm.username = ""

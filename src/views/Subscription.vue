@@ -360,6 +360,8 @@ export default {
           }
           item.srclist = item.photoIdArr.map((ii) => {return this.$Api.osshttp+ ii +".png"})
           item.url = this.$Api.osshttp+ item.photoIdArr[0] +".png"
+          item.grade = Number(item.grade).toFixed(1);
+
               // item.srclist = [
               //   'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
               //   'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
@@ -485,7 +487,7 @@ export default {
 
       })
     },
-    save() {
+   save() {
       let url = this.$Api.glbhttp + "/deal/grade-textbook";
       let data1 = {
         textbookId: this.nowitem.id,
@@ -498,9 +500,13 @@ export default {
       }).then(res => {
 
         console.log("grade res", res.data.data)
+        this.$message({
+          type: 'success',
+          message: '评价成功!'
+        });
         this.dialogFormVisible = false
       })
-
+      this.load()
     },
     handleSelectionChange(val) {
       this.multiSelection = val;

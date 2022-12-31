@@ -52,6 +52,14 @@ const routes = [
     }
   },
   {
+    path: '/phoneLogin',
+    name: 'phoneLogin',
+    component: () => import('../views/PhoneLogin'),
+    meta: {
+      title: '手机登录'
+    }
+  },
+  {
     path: '/register',
     name: 'register',
     component: () => import('../views/Register'),

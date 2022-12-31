@@ -2,16 +2,7 @@ export default {
 
     state: {
 
-        shoppingCart: [{
-            id: "id", // 购物车id
-            productID: "mockBook", // 商品id
-            productName: "mockBook", // 商品名称
-            productImg: "https://dedeket.oss-cn-hangzhou.aliyuncs.com/tmp/1.png", // 商品图片
-            price: "13", // 商品价格
-            num: 3, // 商品数量
-            maxNum: 100, // 商品限购数量
-            check: false // 是否勾选
-        }]
+        shoppingCart: []
         // shoppingCart结构
         /*
         shoppingCart = {

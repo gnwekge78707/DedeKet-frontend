@@ -47,6 +47,7 @@ export default {
               headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             })
             .then(res => {
+              console.log(res)
               res.data.data.map( item => {
                 item.productID = item.textbookId.toString()
                 delete item.textbookId

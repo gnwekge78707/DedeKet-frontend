@@ -313,7 +313,7 @@
         <div class="block" style="text-align: center; font-family: 'Times New Roman'; font-weight: bold">
           <span class="demonstration">你的评分</span>
           <el-rate
-              v-model="form.rating"
+              v-model="nowgrade"
               :colors="colors">
           </el-rate>
         </div>
@@ -511,7 +511,7 @@ export default {
         description: "",
       },
       colors: ['#5194ee', '#e0a40c', '#ee510d'],
-      nowrating: 0,
+      nowgrade: 0,
       collegeOpt: [{
         value: '材料科学与工程学院',
         label: '材料科学与工程学院'
@@ -961,11 +961,31 @@ export default {
       console.log("publishing that", formData)
       axios.post(url, formData, config).then(res => {
         this.$refs.uploadImg.clearFiles();
-        console.log("check Success", res)
+        this.dialogFormVisible = false
         this.load()
+        console.log("check Success", res.data)
+        let textId = res.data.textbookId
+        console.log(textId, this.nowgrade);
+        url = this.$Api.glbhttp + "/deal/grade-textbook";
+        data1 = {
+          textbookId: textId,
+          grade: this.nowgrade,
+          token: localStorage.getItem("token")
+        };
+        console.log(data1)
+        axios.post(url, qs.stringify(data1), {
+          headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).then(res => {
+
+          console.log("grade res", res.data.data)
+
+          this.dialogFormVisibleAdd = false
+        })
+
       })
 
       this.dialogFormVisibleAdd = false
+      this.load()
       this.$message({
         message: '成功发布《' + this.form.bookName + "》",
         type: 'success'
